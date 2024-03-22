@@ -1,0 +1,16 @@
+diff --git a/hadoop-hdfs-project/hadoop-hdfs-client/src/main/java/org/apache/hadoop/hdfs/DFSClient.java b/hadoop-hdfs-project/hadoop-hdfs-client/src/main/java/org/apache/hadoop/hdfs/DFSClient.java
+index 116ed417038..c1db0f3825c 100755
+--- a/hadoop-hdfs-project/hadoop-hdfs-client/src/main/java/org/apache/hadoop/hdfs/DFSClient.java
++++ b/hadoop-hdfs-project/hadoop-hdfs-client/src/main/java/org/apache/hadoop/hdfs/DFSClient.java
+@@ -477,7 +477,10 @@ int getDatanodeWriteTimeout(int numNodes) {
+ 
+   int getDatanodeReadTimeout(int numNodes) {
+     final int t = dfsClientConf.getSocketTimeout();
+-    return t > 0? HdfsConstants.READ_TIMEOUT_EXTENSION*numNodes + t: 0;
++    int readTimeout = HdfsConstants.READ_TIMEOUT_EXTENSION*numNodes + t;
++    Preconditions.checkArgument(readTimeout >= 0,
++            "Read timeout should be non-negative.");
++    return t > 0? readTimeout: 0;
+   }
+ 
+   @VisibleForTesting

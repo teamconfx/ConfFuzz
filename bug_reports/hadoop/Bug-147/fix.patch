@@ -1,0 +1,32 @@
+diff --git a/hadoop-hdfs-project/hadoop-hdfs/src/main/java/org/apache/hadoop/hdfs/server/datanode/fsdataset/impl/BlockPoolSlice.java b/hadoop-hdfs-project/hadoop-hdfs/src/main/java/org/apache/hadoop/hdfs/server/datanode/fsdataset/impl/BlockPoolSlice.java
+index 4611df765f9..b618040a5f2 100644
+--- a/hadoop-hdfs-project/hadoop-hdfs/src/main/java/org/apache/hadoop/hdfs/server/datanode/fsdataset/impl/BlockPoolSlice.java
++++ b/hadoop-hdfs-project/hadoop-hdfs/src/main/java/org/apache/hadoop/hdfs/server/datanode/fsdataset/impl/BlockPoolSlice.java
+@@ -284,9 +284,12 @@ private synchronized static void initializeAddReplicaPool(Configuration conf,
+           VOLUMES_REPLICA_ADD_THREADPOOL_SIZE);
+       // Default pool sizes is max of (volume * number of bp_service) and
+       // number of processor.
+-      addReplicaThreadPool = new ForkJoinPool(conf.getInt(
+-          DFSConfigKeys.DFS_DATANODE_VOLUMES_REPLICA_ADD_THREADPOOL_SIZE_KEY,
+-          poolsize));
++      int addReplicaThreadPoolSize = conf.getInt(
++              DFSConfigKeys.DFS_DATANODE_VOLUMES_REPLICA_ADD_THREADPOOL_SIZE_KEY, poolsize);
++      Preconditions.checkArgument(addReplicaThreadPoolSize > 0,
++              "%s should be a positive integer.",
++              DFSConfigKeys.DFS_DATANODE_VOLUMES_REPLICA_ADD_THREADPOOL_SIZE_KEY);
++      addReplicaThreadPool = new ForkJoinPool(addReplicaThreadPoolSize);
+     }
+   }
+ 
+diff --git a/hadoop-hdfs-project/hadoop-hdfs/src/main/resources/hdfs-default.xml b/hadoop-hdfs-project/hadoop-hdfs/src/main/resources/hdfs-default.xml
+index 8d85d7cc3c0..c68f959137b 100755
+--- a/hadoop-hdfs-project/hadoop-hdfs/src/main/resources/hdfs-default.xml
++++ b/hadoop-hdfs-project/hadoop-hdfs/src/main/resources/hdfs-default.xml
+@@ -1472,6 +1472,7 @@
+   <description>Specifies the maximum number of threads to use for
+   adding block in volume. Default value for this configuration is
+   max of (volume * number of bp_service, number of processor).
++  The value should be greater than 0.
+   </description>
+ </property>
+ 

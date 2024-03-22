@@ -1,0 +1,22 @@
+diff --git a/hadoop-common-project/hadoop-common/src/main/java/org/apache/hadoop/security/LdapGroupsMapping.java b/hadoop-common-project/hadoop-common/src/main/java/org/apache/hadoop/security/LdapGroupsMapping.java
+index f0ff5bd7008..3dc18aece1f 100644
+--- a/hadoop-common-project/hadoop-common/src/main/java/org/apache/hadoop/security/LdapGroupsMapping.java
++++ b/hadoop-common-project/hadoop-common/src/main/java/org/apache/hadoop/security/LdapGroupsMapping.java
+@@ -610,11 +610,13 @@ void goUpGroupHierarchy(Set<String> groupDNs,
+         context.search(groupbaseDN,
+            filter.toString(),
+            SEARCH_CONTROLS);
+-    while (groupResults.hasMoreElements()) {
+-      SearchResult groupResult = groupResults.nextElement();
+-      getGroupNames(groupResult, groups, nextLevelGroups, true);
++    if (groupResults != null) {
++      while (groupResults.hasMoreElements()) {
++        SearchResult groupResult = groupResults.nextElement();
++        getGroupNames(groupResult, groups, nextLevelGroups, true);
++      }
++      goUpGroupHierarchy(nextLevelGroups, goUpHierarchy - 1, groups);
+     }
+-    goUpGroupHierarchy(nextLevelGroups, goUpHierarchy - 1, groups);
+   }
+ 
+   /**

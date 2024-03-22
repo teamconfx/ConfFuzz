@@ -1,0 +1,14 @@
+diff --git a/hadoop-hdfs-project/hadoop-hdfs/src/main/java/org/apache/hadoop/hdfs/server/datanode/DataXceiver.java b/hadoop-hdfs-project/hadoop-hdfs/src/main/java/org/apache/hadoop/hdfs/server/datanode/DataXceiver.java
+index e97e1797029..6ac5e4a11ee 100644
+--- a/hadoop-hdfs-project/hadoop-hdfs/src/main/java/org/apache/hadoop/hdfs/server/datanode/DataXceiver.java
++++ b/hadoop-hdfs-project/hadoop-hdfs/src/main/java/org/apache/hadoop/hdfs/server/datanode/DataXceiver.java
+@@ -810,7 +810,8 @@ public void writeBlock(final ExtendedBlock block,
+           DataEncryptionKeyFactory keyFactory =
+             datanode.getDataEncryptionKeyFactoryForBlock(block);
+           SecretKey secretKey = null;
+-          if (dnConf.overwriteDownstreamDerivedQOP) {
++          if (dnConf.overwriteDownstreamDerivedQOP &&
++                  datanode.blockPoolTokenSecretManager != null) {
+             String bpid = block.getBlockPoolId();
+             BlockKey blockKey = datanode.blockPoolTokenSecretManager
+                 .get(bpid).getCurrentKey();

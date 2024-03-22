@@ -1,0 +1,25 @@
+diff --git a/hadoop-mapreduce-project/hadoop-mapreduce-client/hadoop-mapreduce-client-core/src/main/java/org/apache/hadoop/mapred/SpillRecord.java b/hadoop-mapreduce-project/hadoop-mapreduce-client/hadoop-mapreduce-client-core/src/main/java/org/apache/hadoop/mapred/SpillRecord.java
+index 9e04e6fb87f..02e3364a26a 100644
+--- a/hadoop-mapreduce-project/hadoop-mapreduce-client/hadoop-mapreduce-client-core/src/main/java/org/apache/hadoop/mapred/SpillRecord.java
++++ b/hadoop-mapreduce-project/hadoop-mapreduce-client/hadoop-mapreduce-client-core/src/main/java/org/apache/hadoop/mapred/SpillRecord.java
+@@ -36,6 +36,7 @@
+ import org.apache.hadoop.fs.Path;
+ import org.apache.hadoop.io.IOUtils;
+ import org.apache.hadoop.io.SecureIOUtils;
++import org.apache.hadoop.util.Preconditions;
+ import org.apache.hadoop.util.PureJavaCrc32;
+ 
+ @InterfaceAudience.LimitedPrivate({"MapReduce"})
+@@ -48,8 +49,10 @@
+   private final LongBuffer entries;
+ 
+   public SpillRecord(int numPartitions) {
+-    buf = ByteBuffer.allocate(
+-        numPartitions * MapTask.MAP_OUTPUT_INDEX_RECORD_LENGTH);
++    int bufSize = numPartitions * MapTask.MAP_OUTPUT_INDEX_RECORD_LENGTH;
++    Preconditions.checkArgument(bufSize > 0,
++            "Spill record buffer size should be positive.");
++    buf = ByteBuffer.allocate(bufSize);
+     entries = buf.asLongBuffer();
+   }
+ 

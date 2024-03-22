@@ -1,0 +1,12 @@
+diff --git a/hadoop-common-project/hadoop-common/src/main/java/org/apache/hadoop/ha/ZKFailoverController.java b/hadoop-common-project/hadoop-common/src/main/java/org/apache/hadoop/ha/ZKFailoverController.java
+index d24d5630c59..0b32cc0a488 100644
+--- a/hadoop-common-project/hadoop-common/src/main/java/org/apache/hadoop/ha/ZKFailoverController.java
++++ b/hadoop-common-project/hadoop-common/src/main/java/org/apache/hadoop/ha/ZKFailoverController.java
+@@ -656,6 +656,7 @@ public Void run() throws Exception {
+   private void doGracefulFailover()
+       throws ServiceFailedException, IOException, InterruptedException {
+     int timeout = FailoverController.getGracefulFenceTimeout(conf) * 2;
++    Preconditions.checkArgument(timeout >= 0, "timeout should be non-negative.");
+     
+     // Phase 1: pre-flight checks
+     checkEligibleForFailover();
